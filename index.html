@@ -3,29 +3,48 @@
 <title>GoodNews Connect</title><link rel="manifest" href="manifest.json"><meta name="theme-color" content="#1877f2">
 <link rel="apple-touch-icon" href="logo.jpg"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="GoodNews Connect">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#f0f2f5;--c:#fff;--t:#1c1e21;--g:#8a8d91;--b:#1877f2;--l:#dddfe2}
-[data-d]{--bg:#18191a;--c:#242526;--t:#e4e6eb;--g:#8a8d91;--l:#3a3b3c}
-*{box-sizing:border-box}body{margin:0;font:15px system-ui,sans-serif;background:var(--bg);color:var(--t)}
-header{position:fixed;top:0;left:0;right:0;height:52px;background:var(--c);border-bottom:1px solid var(--l);display:flex;align-items:center;justify-content:space-between;padding:0 12px;z-index:5}
-header img{height:34px;border-radius:6px}header b{color:var(--b);margin-left:8px}
-#main{padding:64px 10px 76px;max-width:640px;margin:auto}
-footer{position:fixed;bottom:0;left:0;right:0;height:58px;background:var(--c);border-top:1px solid var(--l);display:flex;z-index:5;padding-bottom:env(safe-area-inset-bottom)}
-footer button{flex:1;background:none;border:0;color:var(--g);position:relative;font-size:10px}footer button.on{color:var(--b)}
-svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;display:block;margin:auto}
-.badge{position:absolute;top:4px;left:55%;background:#e41e3f;color:#fff;border-radius:9px;padding:0 5px;font-size:10px}
-.card{background:var(--c);border-radius:10px;padding:12px;margin-bottom:10px;box-shadow:0 1px 2px #0002}
-input,select,textarea{width:100%;padding:10px;margin:4px 0;border:1px solid var(--l);border-radius:8px;background:var(--bg);color:var(--t);font:inherit}
-button.p{background:var(--b);color:#fff;border:0;border-radius:8px;padding:10px 14px;font-weight:600}button.s{background:var(--bg);color:var(--t);border:1px solid var(--l);border-radius:8px;padding:8px 12px}
-.row{display:flex;gap:8px;align-items:center}.row>*{flex:1}.av{width:42px;height:42px;border-radius:50%;background:var(--l) center/cover;flex:none}
-.tag{background:#e7f3ff;color:var(--b);border-radius:6px;padding:2px 7px;font-size:12px}small,.m{color:var(--g)}
-.sk{height:84px;border-radius:10px;margin-bottom:10px;background:linear-gradient(90deg,var(--c) 25%,var(--l) 37%,var(--c) 63%);background-size:400% 100%;animation:sh 1.2s infinite}
+:root{--bg:#f0f2f5;--c:#fff;--t:#1c2430;--g:#65676b;--b:#1877f2;--bd:#166fe5;--bs:#e7f3ff;--l:#e4e6eb;--sh:0 1px 2px rgba(16,24,40,.06),0 10px 24px -14px rgba(16,24,40,.25);--f:"Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+[data-d]{--bg:#18191a;--c:#242526;--t:#e4e6eb;--g:#a8abb0;--l:#3a3b3c;--bs:#263951;--sh:0 1px 2px #0006}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}[hidden]{display:none!important}
+body{margin:0;font:15px/1.55 var(--f);background:var(--bg);color:var(--t);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+button{font:inherit;cursor:pointer}a{color:var(--b)}h2{margin:8px 0 4px}h3{margin:6px 0;letter-spacing:-.01em}
+header{position:fixed;top:0;left:0;right:0;height:56px;background:var(--c);border-bottom:1px solid var(--l);display:flex;align-items:center;justify-content:space-between;padding:0 12px;padding-top:env(safe-area-inset-top);z-index:7}
+.hl{display:flex;align-items:center;gap:9px;min-width:0}.hl img{height:36px;width:auto;border-radius:9px}.hl b{color:var(--b);font-size:19px;font-weight:800;letter-spacing:-.4px;white-space:nowrap}
+.hr{display:flex;gap:8px}.ib{width:40px;height:40px;border-radius:50%;border:0;background:var(--bg);color:var(--g);display:grid;place-items:center;transition:background .15s}.ib:hover{background:var(--l)}
+#main{padding:68px 12px 80px;max-width:680px;margin:auto}
+footer{position:fixed;bottom:0;left:0;right:0;height:calc(58px + env(safe-area-inset-bottom));padding-bottom:env(safe-area-inset-bottom);background:var(--c);border-top:1px solid var(--l);display:flex;z-index:8}
+footer button{flex:1;background:none;border:0;color:var(--g);position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:10.5px;font-weight:600;transition:color .15s}
+footer button i{font-style:normal}footer button.on{color:var(--b)}
+footer button.on::after{content:"";position:absolute;top:0;left:22%;right:22%;height:3px;border-radius:0 0 4px 4px;background:var(--b)}
+svg{width:25px;height:25px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;display:block}
+.badge{position:absolute;top:5px;left:calc(50% + 6px);background:#e41e3f;color:#fff;border-radius:99px;min-width:18px;height:18px;padding:0 5px;font-size:11px;font-weight:700;display:grid;place-items:center;border:2px solid var(--c)}
+@media(min-width:900px){footer{top:0;bottom:auto;left:50%;right:auto;transform:translateX(-50%);width:min(500px,46vw);height:56px;padding:0;border:0;background:none}
+footer button i{display:none}footer button{border-radius:10px;margin:4px 2px}footer button:hover{background:var(--bg)}footer button.on::after{top:auto;bottom:-4px;left:12%;right:12%;height:3px;border-radius:3px 3px 0 0}
+#main{padding-bottom:30px}.badge{top:4px;left:calc(50% + 4px)}}
+.card{background:var(--c);border:1px solid var(--l);border-radius:16px;padding:14px;margin-bottom:12px;box-shadow:var(--sh);transition:box-shadow .2s,transform .2s}
+.card:hover{box-shadow:0 14px 30px -16px rgba(16,24,40,.35)}
+input,select,textarea{width:100%;padding:11px 13px;margin:4px 0;border:1px solid var(--l);border-radius:12px;background:var(--bg);color:var(--t);font:inherit;outline:0;transition:border-color .15s,box-shadow .15s}
+input:focus,select:focus,textarea:focus{border-color:var(--b);box-shadow:0 0 0 3px rgba(24,119,242,.18);background:var(--c)}
+button.p{background:var(--b);color:#fff;border:0;border-radius:12px;padding:11px 16px;font-weight:700;box-shadow:0 8px 18px -10px var(--b);transition:background .15s,transform .1s}
+button.p:hover{background:var(--bd)}button.p:active,button.s:active{transform:translateY(1px)}button.p[disabled]{opacity:.55}
+button.s{background:var(--bg);color:var(--t);border:0;border-radius:12px;padding:10px 14px;font-weight:600}button.s:hover{background:var(--l)}
+.row{display:flex;gap:8px;align-items:center}.row>*{flex:1}
+.av{width:44px;height:44px;border-radius:50%;background:var(--l) center/cover;flex:none;box-shadow:0 0 0 2px var(--c),0 0 0 3px var(--l)}
+.tag{background:var(--bs);color:var(--b);border-radius:99px;padding:3px 10px;font-size:12px;font-weight:700}small,.m{color:var(--g)}
+.sk{height:96px;border-radius:16px;margin-bottom:12px;background:linear-gradient(90deg,var(--c) 25%,var(--l) 37%,var(--c) 63%);background-size:400% 100%;animation:sh 1.3s infinite}
 @keyframes sh{0%{background-position:100% 0}100%{background-position:0 0}}
-.msg{max-width:78%;padding:8px 12px;border-radius:16px;margin:4px 0;background:var(--l)}.msg.me{background:var(--b);color:#fff;margin-left:auto}
-.modal{position:fixed;inset:0;background:#0008;z-index:9;display:flex;align-items:center;justify-content:center;padding:16px}.modal>div{background:var(--c);border-radius:12px;padding:16px;max-height:80vh;overflow:auto;white-space:pre-wrap}
-#toast{position:fixed;top:60px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:8px 14px;border-radius:20px;z-index:20;display:none}
-.auth{max-width:360px;margin:40px auto;padding:16px;text-align:center}.auth img{width:96px;border-radius:16px}
-a{color:var(--b)}h3{margin:6px 0}
+.msg{max-width:78%;padding:9px 14px;border-radius:18px;margin:5px 0;background:var(--l);overflow-wrap:anywhere}.msg.me{background:var(--b);color:#fff;margin-left:auto}
+.modal{position:fixed;inset:0;background:rgba(10,15,25,.6);z-index:20;display:flex;align-items:center;justify-content:center;padding:16px;animation:fd .18s}
+.modal>div{background:var(--c);border-radius:20px;padding:20px;width:min(560px,100%);max-height:84vh;overflow:auto;white-space:pre-wrap;box-shadow:0 30px 70px -20px #0008;animation:pp .24s cubic-bezier(.2,.9,.3,1.1)}
+@media(max-width:640px){.modal{align-items:flex-end;padding:0}.modal>div{border-radius:22px 22px 0 0;padding-bottom:calc(22px + env(safe-area-inset-bottom))}}
+@keyframes fd{from{opacity:0}}@keyframes pp{from{transform:translateY(16px);opacity:0}}
+#toast{position:fixed;top:66px;left:50%;transform:translateX(-50%);background:#101828;color:#fff;padding:11px 18px;border-radius:12px;z-index:30;display:none;max-width:92%;font-weight:600;font-size:14px;box-shadow:0 12px 30px -10px #0008}
+body:has(.auth){background:linear-gradient(160deg,var(--bs),var(--bg) 55%)}
+.auth{max-width:400px;margin:6vh auto;padding:28px 22px;text-align:center;background:var(--c);border-radius:24px;box-shadow:0 30px 60px -28px rgba(16,24,40,.4);animation:pp .4s}
+.auth img{width:92px;border-radius:22px;box-shadow:var(--sh)}.auth h2{color:var(--b);font-size:26px;font-weight:800;letter-spacing:-.5px}
 </style></head><body>
 <div id="toast"></div><div id="app"></div>
 <script>
@@ -59,9 +78,9 @@ $('#go').onclick=go(async()=>{const d={email:$('#em').value,pass:$('#pw').value}
  T=localStorage.t=r.t;boot()})};draw()}
 /* SHELL */
 async function boot(){if(!T)return authView();
- $('#app').innerHTML=`<header><div class="row" style="flex:none"><img src="logo.jpg"><b>GoodNews Connect</b></div><button id="lo" style="background:none;border:0;color:var(--g)">${I.out}</button></header><div id="main">${sk(4)}</div>
- <footer>${[['up','Upload'],['feed','Feed'],['msg','Messages'],['acc','Account'],['set','Settings']].map(([k,n])=>`<button data-v="${k}">${I[k]}${n}${k=='msg'?'<span class="badge" id="bd" hidden></span>':''}</button>`).join('')}</footer>`;
- $('#lo').onclick=out;document.querySelectorAll('footer button').forEach(b=>b.onclick=()=>show(b.dataset.v));
+ $('#app').innerHTML=`<header><div class="hl"><img src="logo.jpg" alt=""><b>GoodNews Connect</b></div><div class="hr"><button class="ib" id="hs" aria-label="Search">${I.feed}</button><button class="ib" id="lo" aria-label="Log out">${I.out}</button></div></header><div id="main">${sk(4)}</div>
+ <footer>${[['up','Upload'],['feed','Feed'],['msg','Messages'],['acc','Account'],['set','Settings']].map(([k,n])=>`<button data-v="${k}">${I[k]}<i>${n}</i>${k=='msg'?'<span class="badge" id="bd" hidden></span>':''}</button>`).join('')}</footer>`;
+ $('#lo').onclick=out;$('#hs').onclick=()=>show('feed');document.querySelectorAll('footer button').forEach(b=>b.onclick=()=>show(b.dataset.v));
  try{const r=await api('me');ME=r.me;badge(r.unread)}catch(e){return}
  show('feed');setInterval(go(async()=>{if(T)badge((await api('me')).unread)}),30000)}
 const badge=n=>{UN=n;const b=$('#bd');if(b){b.hidden=!n;b.textContent=n}};
