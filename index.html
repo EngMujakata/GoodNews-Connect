@@ -93,7 +93,7 @@ const calcAge=d=>{if(!d)return'';const b=new Date(d),n=new Date();let a=n.getFul
 async function call(a,d,rid,ms){const ctl=new AbortController(),t=setTimeout(()=>ctl.abort(),ms||60000);
  try{const res=await fetch(API,{method:'POST',body:JSON.stringify({a,t:T,rid,...d}),signal:ctl.signal,redirect:'follow'});
   let j;try{j=await res.json()}catch(e){throw new ApiErr('The server sent an unexpected reply. Please try again.',1)}
-  if(j.err){if(j.err==='auth')out();throw new ApiErr(String(j.err))}return j}
+  if(j.err){if(j.err==='auth')out();throw new ApiErr(String(j.err),!!j.busy)}return j}
  catch(e){if(e instanceof ApiErr)throw e;
   if(e&&e.name==='AbortError')throw new ApiErr('The server took too long to respond. Please try again.',1);
   if(e instanceof TypeError){console.warn('Backend unreachable. Check the web app deployment: Execute as Me, access Anyone, latest version.',e);throw new ApiErr('Cannot connect right now. Check your internet connection and try again.',1)}
@@ -225,13 +225,20 @@ function msgView(){$('#main').innerHTML=`<h2>Messages</h2><div id="th"></div><bu
   const go=()=>{$('#cr').innerHTML=sk(2);api('people',{q:$('#cq').value,page:0}).then(r=>{$('#cr').innerHTML=r.items.filter(p=>!ME||p.id!==ME.id).map(p=>`<div class="thr" style="padding:8px 0" data-id="${p.id}">${av(p.pic,44)}<div class="pi"><b>${esc(p.name)}</b><small>${esc(p.profession||p.country||'')}</small></div></div>`).join('')||'<div class="emp">No one found</div>'}).catch(e=>toast(e))};
   $('#cq').oninput=()=>{clearTimeout(d);d=setTimeout(go,350)};$('#cr').onclick=e=>{const r=e.target.closest('[data-id]');if(r){s.remove();nav('chat',r.dataset.id)}};go()}}
 /* CHAT (WhatsApp style: text, photos, video, files, voice notes) */
-async function chatView(id){let last=0,sending=0,RC=null,tm;const m=$('#main');
+async function chatView(id){let last=0,sending=0,RC=null,tm,oldest=0,more=false,loadingOld=false;const m=$('#main');
  m.innerHTML=`<div class="chh"><button class="ib" onclick="history.back()">${I.back}</button><div class="pe" id="pe">${av('',40)}<b>...</b></div></div><div class="ms" id="ms">${sk(1)}</div><div class="cmp" id="cmp"><button class="ib" id="ca" aria-label="Attach">${I.clip}</button><input id="ct" placeholder="Message" autocomplete="off"><button class="p" id="cs" aria-label="Send">${I.mic}</button></div>`;
  const box=$('#ms'),near=()=>box.scrollHeight-box.scrollTop-box.clientHeight<160,down=()=>box.scrollTop=box.scrollHeight;
- const bub=(x,cls='')=>{MD['m'+x.id]=x.media||[];return`<div class="b ${x.mine?'me':''} ${cls}" data-id="${x.id}">${(x.media||[]).map((a,i)=>a.t==='i'?`<img class="bi" src="${esc(pu(a.id,500))}" onclick="view('m${x.id}',${i})">`:a.t==='v'?`<div class="mi" style="aspect-ratio:16/10;border-radius:10px;overflow:hidden;margin-bottom:4px" onclick="view('m${x.id}',${i})"><div class="vd"><img src="${pu(a.id,400)}" onerror="this.remove()">${I.play}</div></div>`:a.t==='a'?`<audio controls preload="none" src="${dl(a.id)}"></audio>`:`<a href="https://drive.google.com/file/d/${a.id}/view" target="_blank" rel="noopener">${esc(a.n)}</a><br>`).join('')}${x.text?esc(x.text):''}<i class="tm">${hm(x.ts)}</i></div>`};
+ const bub=(x,cls='')=>{MD['m'+x.id]=x.media||[];return`<div class="b ${x.mine?'me':''} ${cls}" data-id="${x.id}">${(x.media||[]).map((a,i)=>a.t==='i'?`<img class="bi" src="${esc(pu(a.id,500))}" onclick="view('m${x.id}',${i})">`:a.t==='v'?`<div class="mi" style="aspect-ratio:16/10;border-radius:10px;overflow:hidden;margin-bottom:4px" onclick="view('m${x.id}',${i})"><div class="vd"><img src="${esc(pu(a.id,400))}" onerror="this.remove()">${I.play}</div></div>`:a.t==='a'?`<audio controls preload="none" src="${dl(a.id)}"></audio>`:`<a href="https://drive.google.com/file/d/${gid(a.id)}/view" target="_blank" rel="noopener">${esc(a.n)}</a><br>`).join('')}${x.text?esc(x.text):''}<i class="tm">${hm(x.ts)}</i></div>`};
  const put=items=>{const n=near(),fresh=items.filter(x=>!box.querySelector(`[data-id="${x.id}"]`));if(!fresh.length)return 0;box.insertAdjacentHTML('beforeend',fresh.map(x=>bub(x)).join(''));last=Math.max(last,...fresh.map(x=>x.ts));if(n)down();return fresh.some(x=>!x.mine)};
  api('peer',{id}).then(r=>{$('#pe').innerHTML=`${av(r.p.pic,40)}<div><b>${esc(r.p.name)}</b><small>${esc(r.p.profession||r.p.country||'')}</small></div>`;$('#pe').onclick=()=>nav('prof',id)}).catch(()=>{});
- try{const r=await api('thread',{id});box.innerHTML='';put(r.items);if(!r.items.length)box.innerHTML='<div class="emp">Say hello</div>';down();if(r.items.some(x=>!x.mine))api('markRead',{id}).then(refreshMe).catch(()=>{})}catch(e){toast(e)}
+ /* lazy history: newest 10 first, 10 more each time you scroll to the top */
+ const older=async()=>{if(!more||loadingOld||!oldest)return;loadingOld=true;const note=document.createElement('div');note.className='emp ol';note.style.padding='8px';note.textContent='Loading earlier messages...';box.prepend(note);
+  try{const r=await api('thread',{id,before:oldest,size:10});note.remove();const have=new Set([...box.querySelectorAll('[data-id]')].map(e=>e.dataset.id)),items=r.items.filter(x=>!have.has(x.id));
+   if(items.length){const h0=box.scrollHeight,t0=box.scrollTop;box.insertAdjacentHTML('afterbegin',items.map(x=>bub(x)).join(''));box.scrollTop=t0+(box.scrollHeight-h0);oldest=Math.min(oldest,...items.map(x=>x.ts))}
+   more=!!r.more&&items.length>0}catch(e){note.remove();toast(e)}finally{loadingOld=false}};
+ box.addEventListener('scroll',()=>{if(box.scrollTop<80)older()},{passive:true});
+ try{const r=await api('thread',{id,size:10});box.innerHTML='';put(r.items);more=!!r.more;oldest=r.items.length?Math.min(...r.items.map(x=>x.ts)):0;if(!r.items.length)box.innerHTML='<div class="emp">Say hello</div>';down();
+  setTimeout(async()=>{while(more&&!loadingOld&&box.scrollHeight<=box.clientHeight+40){await older()}},50);if(r.items.some(x=>!x.mine))api('markRead',{id}).then(refreshMe).catch(()=>{})}catch(e){toast(e)}
  CP=setInterval(async()=>{if(V!=='chat'||document.hidden||sending||RC)return;try{const r=await api('thread',{id,since:last});if(r.items.length){const e=box.querySelector('.emp');if(e)e.remove();if(put(r.items))api('markRead',{id}).then(refreshMe).catch(()=>{})}}catch(e){}},4000);
  const sendText=async()=>{const t=$('#ct').value.trim();if(!t)return;$('#ct').value='';$('#cs').innerHTML=I.mic;const e=box.querySelector('.emp');if(e)e.remove();
   const tid='t'+Date.now();box.insertAdjacentHTML('beforeend',bub({id:tid,mine:1,text:t,ts:Date.now()},'pend'));down();sending++;
